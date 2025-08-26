@@ -37,6 +37,20 @@ class GeminiLLM:
   async def query(self, query: str, context):
     prompt = final_prompt(query, context)
     return await self.generate(prompt)
+  
+  async def stream(self, query: str, context):
+    prompt = final_prompt(query, context)
+    stream_response = await self.model.aio.models.generate_content_stream(
+      model=os.getenv("GEMINI_MODEL"),
+      contents=prompt,
+      config=genai.types.GenerateContentConfig(
+        temperature=0,
+      ),
+    )
+    async for chunk in stream_response:
+      if chunk.text:
+        yield chunk.text
+
 
   def count_tokens(self, content: str) -> int:
     tokens = self.encoding.encode(content)
