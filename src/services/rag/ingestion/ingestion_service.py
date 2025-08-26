@@ -30,11 +30,11 @@ async def ingest_pdf():
   for filename in os.listdir(DOCUMENTS_DIR):
     texts: List[str] = []
     if filename.lower().endswith(".pdf"):
-        path = os.path.join(DOCUMENTS_DIR, filename)
-        buffer = read_pdf(path)
-        
-        clean_buffer = " ".join(preprocessor_wrapper.run([buffer]))
-        texts.append(clean_buffer)
+      path = os.path.join(DOCUMENTS_DIR, filename)
+      buffer = read_pdf(path)
+      
+      clean_buffer = " ".join(preprocessor_wrapper.run([buffer]))
+      texts.append(clean_buffer)
     
     splitter = CharacterTextSplitter(chunk_size=64, chunk_overlap=12)
     docs: List[Document] = []
@@ -48,6 +48,8 @@ async def ingest_pdf():
       vector = await llm_wrapper.embed(doc.page_content)
       n_tokens = llm_wrapper.count_tokens(doc.page_content)
       await repository.save(filename, doc.page_content, n_tokens, vector.embeddings[0].values)
+  
+  await repository.adjust_ivfflat_index()
 
 if __name__ == "__main__":
     bootstrap()

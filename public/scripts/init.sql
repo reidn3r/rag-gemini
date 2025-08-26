@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS tb_documents (
 CREATE INDEX IF NOT EXISTS idx_tb_documents_embedding_ivfflat
 ON tb_documents
 USING ivfflat (embedding vector_cosine_ops)
-WITH (lists = 64);
+WITH (lists = 10);
 
 CREATE INDEX IF NOT EXISTS idx_tb_documents_gin_content
 ON tb_documents
