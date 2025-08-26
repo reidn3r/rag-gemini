@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from src.abstraction.models import MessageDTO
+from services.query.query_service import QueryService
+from src.abstraction.models.MessageDTO import MessageDTO
 
 app = FastAPI()
 @app.get("/ping")
@@ -7,5 +8,7 @@ def ping():
     return "pong"
 
 @app.post("/query")
-def query(data: MessageDTO):
-    return {"data": "wip"}
+async def query(data: MessageDTO):
+    q = QueryService()
+    rs = await q.run(data.message)
+    return {"result": rs}

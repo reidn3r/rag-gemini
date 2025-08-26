@@ -1,3 +1,4 @@
+from src.services.prompts.prompt_builder import reranking_prompt
 from google.genai import types
 from dotenv import load_dotenv
 from google import genai
@@ -26,6 +27,13 @@ class GeminiLLM:
       ),
     )
     return response.text
+  
+  async def rerank(self, query: str, context: set):
+    prompt = reranking_prompt(query, context)
+
+    print(f'PROMPT: ', prompt)
+    
+    return await self.generate(prompt)
   
   def count_tokens(self, content: str) -> int:
     tokens = self.encoding.encode(content)
